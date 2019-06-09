@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import luizalabs.Models.Items;
-import luizalabs.Repositories.SortRepository;
+import luizalabs.Repositories.FilterRepository;
 
 @RestController
 public class SortController {
@@ -22,9 +22,9 @@ public class SortController {
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<?> sort(@RequestBody Items items) {
-    Map<String, String> filters = SortRepository.getFilters(items);
+    Map<String, String> filters = FilterRepository.getFilters(items);
     try {
-      Items filteredItems = SortRepository.applyFiltersToObject(filters, items);
+      Items filteredItems = FilterRepository.applyFiltersToObject(filters, items);
       return new ResponseEntity<Items>(filteredItems, HttpStatus.OK);
     } catch(NoSuchFieldException e) {
       return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);

@@ -9,7 +9,7 @@ import java.util.Map;
 import luizalabs.Models.Item;
 import luizalabs.Models.Items;
 
-public class SortRepository {
+public class FilterRepository {
   
   public static Map<String, String> getFilters(Items items) {
     Map<String, String> filters = new HashMap<>();
