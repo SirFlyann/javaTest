@@ -1,31 +1,31 @@
 package luizalabs.Repositories;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-
+import luizalabs.Models.Filter;
 import luizalabs.Models.Item;
 import luizalabs.Models.Items;
 
 public class FilterRepository {
   
-  public static Map<String, String> getFilters(Items items) {
-    Map<String, String> filters = new HashMap<>();
+  public static List<Filter> getFilters(Items items) {
+    List<Filter> filters = new ArrayList<Filter>();
     if (items.getFilter() != null) {
       String[] filterStrings = items.getFilter().split(";");
       for(String filter : filterStrings) {
         String[] filterData = filter.split("=");
         String fieldName = filterData[0];
         String fieldValue = filterData[1];
-        filters.put(fieldName, fieldValue);
+        Filter newFilter = new Filter(fieldName, fieldValue);
+        filters.add(newFilter);
       }
     }    
     return filters;
   }
   
-  public static Items applyFiltersToObject(Map<String, String> filters, Items items) throws NoSuchFieldException {
+  public static Items applyFiltersToObject(List<Filter> filters, Items items) throws NoSuchFieldException {
     List<Item> itemsList = items.getItems();
     Class<Item> itemClass = Item.class;
     
@@ -37,7 +37,7 @@ public class FilterRepository {
 //      
 //    });
     
-    for(Map.Entry<String, String> filter : filters.entrySet()) {
+    for(Filter filter : filters) {
       Iterator<Item> iterator = itemsList.iterator();
       while(iterator.hasNext()) {
         Item item = iterator.next();
