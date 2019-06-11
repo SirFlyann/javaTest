@@ -17,9 +17,9 @@ public class Items implements Serializable{
   @JsonProperty("filter")
   @Getter @Setter private String filter;
   
-  @JsonProperty("groupBy")
-  @Getter @Setter private String groupBy;
-
   @JsonProperty("orderBy")
   @Getter @Setter private String orderBy;
+
+  @JsonProperty("groupBy")
+  @Getter @Setter private String groupBy;
 }
