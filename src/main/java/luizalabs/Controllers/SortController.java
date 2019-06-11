@@ -15,6 +15,7 @@ import luizalabs.Models.Filter;
 import luizalabs.Models.Items;
 import luizalabs.Repositories.FilterRepository;
 import luizalabs.Repositories.GroupRepository;
+import luizalabs.Repositories.SortRepository;
 
 @RestController
 public class SortController {
@@ -26,12 +27,14 @@ public class SortController {
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<?> sort(@RequestBody Items items) {
     List<Filter> filters = FilterRepository.getFilters(items);
+    List<Filter> orderByFilters = SortRepository.getOrderByFilters(items);
     try {
       Items filteredItems = FilterRepository.applyFiltersToObject(filters, items);
       
       List<String> groupAttributes = GroupRepository.getGroupByFields(items);
       GroupedItems groupedItems = new GroupedItems(GroupRepository.groupItemsUsingAttributes(filteredItems, groupAttributes));
-      return new ResponseEntity<GroupedItems>(groupedItems, HttpStatus.OK);
+      GroupedItems sortedItems = SortRepository.sortGroupsUsingFilters(groupedItems, orderByFilters);
+      return new ResponseEntity<GroupedItems>(sortedItems, HttpStatus.OK);
     } catch(NoSuchFieldException e) {
       return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
