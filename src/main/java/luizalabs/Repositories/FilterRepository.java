@@ -12,13 +12,17 @@ public class FilterRepository {
   
   public static List<Filter> getFilters(String filterString) {
     List<Filter> filters = new ArrayList<Filter>();
-    String[] filterStrings = filterString.split(";");
-    for(String filter : filterStrings) {
-      String[] filterData = filter.split("=");
-      String fieldName = filterData[0];
-      String fieldValue = filterData[1];
-      Filter newFilter = new Filter(fieldName, fieldValue);
-      filters.add(newFilter);
+    if (filterString != null) {
+      String[] filterStrings = filterString.split(";");
+      for(String filter : filterStrings) {
+        String[] filterData = filter.split("=");
+        if (filterData.length > 1) {
+          String fieldName = filterData[0];
+          String fieldValue = filterData[1];
+          Filter newFilter = new Filter(fieldName, fieldValue);
+          filters.add(newFilter);
+        }
+      }
     }
     return filters;
   }
@@ -26,14 +30,6 @@ public class FilterRepository {
   public static Items applyFiltersToObject(List<Filter> filters, Items items) throws NoSuchFieldException {
     List<Item> itemsList = items.getItems();
     Class<Item> itemClass = Item.class;
-    
-//    for(Item item: itemsList) {
-//      itemsList.remove(item);
-//    }
-//    
-//    itemsList.stream().forEach(item -> {
-//      
-//    });
     
     for(Filter filter : filters) {
       Iterator<Item> iterator = itemsList.iterator();
