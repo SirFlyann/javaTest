@@ -10,18 +10,16 @@ import luizalabs.Models.Items;
 
 public class FilterRepository {
   
-  public static List<Filter> getFilters(Items items) {
+  public static List<Filter> getFilters(String filterString) {
     List<Filter> filters = new ArrayList<Filter>();
-    if (items.getFilter() != null) {
-      String[] filterStrings = items.getFilter().split(";");
-      for(String filter : filterStrings) {
-        String[] filterData = filter.split("=");
-        String fieldName = filterData[0];
-        String fieldValue = filterData[1];
-        Filter newFilter = new Filter(fieldName, fieldValue);
-        filters.add(newFilter);
-      }
-    }    
+    String[] filterStrings = filterString.split(";");
+    for(String filter : filterStrings) {
+      String[] filterData = filter.split("=");
+      String fieldName = filterData[0];
+      String fieldValue = filterData[1];
+      Filter newFilter = new Filter(fieldName, fieldValue);
+      filters.add(newFilter);
+    }
     return filters;
   }
   
