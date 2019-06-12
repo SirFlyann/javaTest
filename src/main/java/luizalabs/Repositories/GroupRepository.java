@@ -10,6 +10,8 @@ import luizalabs.Models.Group;
 import luizalabs.Models.Items;
 import luizalabs.Models.Item;
 import luizalabs.Utils.Reflection;
+import me.xdrop.fuzzywuzzy.FuzzySearch;
+import me.xdrop.fuzzywuzzy.model.ExtractedResult;
 
 public class GroupRepository {
   
@@ -53,13 +55,28 @@ public class GroupRepository {
     for (Item item : items) {
       try {
         String attributeValue = Reflection.getFieldValue(attribute, item);
-        if (!itemGroup.containsKey(attributeValue)) {
+        String groupName = attributeValue;
+        if (attribute.equals("title")) {
+          List<String> possibleGroups = new ArrayList<String>();
+          for (String key : itemGroup.keySet()) {
+            possibleGroups.add(key);
+          }
+          if (possibleGroups.size() > 1) {
+            ExtractedResult bestGroupMatch = FuzzySearch.extractOne(attributeValue, possibleGroups);
+            if (bestGroupMatch.getScore() > 70) {
+              groupName = bestGroupMatch.getString();
+            }
+          } else {
+            groupName = attributeValue;
+          }
+        }
+        if (!itemGroup.containsKey(groupName)) {
           List<Item> itemGroupList = new ArrayList<Item>();
           itemGroupList.add(item);
           
-          itemGroup.put(attributeValue, itemGroupList);
+          itemGroup.put(groupName, itemGroupList);
         } else {
-          itemGroup.get(attributeValue).add(item);
+          itemGroup.get(groupName).add(item);
         }
       } catch(NoSuchFieldException e) {
         throw new NoSuchFieldException("Houve um erro ao recuperar o valor do atributo " + attribute);

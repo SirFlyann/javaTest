@@ -30,8 +30,6 @@ public class SortRepository {
     List<Group> groupList = groups.getData();
     for(Group group : groupList) {
       group.getItems().sort(Filter.chainedItemComparators(filters));
-//      group.getItems().sort(Comparator.comparing(Item::getStock).reversed()
-//          .thenComparing(Comparator.comparing(Item::getPrice)));
     }
     return new GroupedItems(groupList);
   }

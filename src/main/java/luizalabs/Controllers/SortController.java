@@ -1,5 +1,6 @@
 package luizalabs.Controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,10 @@ public class SortController {
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<?> sort(@RequestBody Items items) {
-    List<Filter> filters = FilterRepository.getFilters(items);
+    List<Filter> filters = new ArrayList<Filter>();
+    if (items.getFilter() != null) {
+      filters = FilterRepository.getFilters(items.getFilter());
+    }
     List<Filter> orderByFilters = SortRepository.getOrderByFilters(items);
     try {
       Items filteredItems = FilterRepository.applyFiltersToObject(filters, items);
