@@ -5,34 +5,33 @@ import java.util.List;
 
 import luizalabs.Models.Filter;
 import luizalabs.Models.Group;
-import luizalabs.Models.GroupedItems;
-import luizalabs.Models.Items;
 
 public class SortRepository {
-  public static List<Filter> getOrderByFilters(Items items) {
-    List<Filter> filters = new ArrayList<Filter>();
+  public static List<Filter> getOrderByFilters(String filterString) {
+    List<Filter> filters;
     String[] orderByStrings = new String[] {};
-    if (items.getOrderBy() != null) {
-      orderByStrings = items.getOrderBy().split(";");
+    if (filterString != null) {
+      orderByStrings = filterString.split(";");
     } else {
       orderByStrings = new String[] { "stock:desc", "price:asc" };
     }
-    for(String orderByString : orderByStrings) {
-      String fieldName = orderByString.split(":")[0];
-      String fieldValue = orderByString.split(":")[1];
-      Filter newOrderFilter = new Filter(fieldName, fieldValue);
-      filters.add(newOrderFilter);
-    }
+    filters = getFiltersFromStringArray(orderByStrings);
     return filters;
   }
+  
+  private static List<Filter> getFiltersFromStringArray(String[] filters) {
+    List<Filter> filtersList = new ArrayList<Filter>();
+    for(String orderByString : filters) {
+      Filter newOrderFilter = new Filter(orderByString.split(":")[0], orderByString.split(":")[1]);
+      filtersList.add(newOrderFilter);
+    }
+    return filtersList;
+  }
 
-  public static GroupedItems sortGroupsUsingFilters(GroupedItems groups, List<Filter> filters) throws NoSuchFieldException{
-    List<Group> groupList = groups.getData();
+  public static List<Group> sortGroupsUsingFilters(List<Group> groupList, List<Filter> filters) {
     for(Group group : groupList) {
       group.getItems().sort(Filter.chainedItemComparators(filters));
     }
-    return new GroupedItems(groupList);
+    return groupList;
   }
-  
-
 }

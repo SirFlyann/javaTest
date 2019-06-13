@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import luizalabs.Models.GroupedItems;
+import luizalabs.Models.Item;
 import luizalabs.Models.Filter;
+import luizalabs.Models.Group;
 import luizalabs.Models.Items;
 import luizalabs.Repositories.FilterRepository;
 import luizalabs.Repositories.GroupRepository;
@@ -31,13 +33,15 @@ public class SortController {
     if (items.getFilter() != null) {
       filters = FilterRepository.getFilters(items.getFilter());
     }
-    List<Filter> orderByFilters = SortRepository.getOrderByFilters(items);
+    List<Filter> orderByFilters = SortRepository.getOrderByFilters(items.getOrderBy());
     try {
-      Items filteredItems = FilterRepository.applyFiltersToObject(filters, items);
+      List<Item> filteredItemsList = FilterRepository.applyFiltersToObject(filters, items.getItems());
+      Items filteredItems = new Items(filteredItemsList);
       
-      List<String> groupAttributes = GroupRepository.getGroupByFields(items);
-      GroupedItems groupedItems = new GroupedItems(GroupRepository.groupItemsUsingAttributes(filteredItems, groupAttributes));
-      GroupedItems sortedItems = SortRepository.sortGroupsUsingFilters(groupedItems, orderByFilters);
+      List<String> groupAttributes = GroupRepository.getGroupByFields(items.getGroupBy());
+      GroupedItems groupedItems = new GroupedItems(GroupRepository.groupItemsUsingAttributes(filteredItems.getItems(), groupAttributes));
+      List<Group> groupedItemsList = SortRepository.sortGroupsUsingFilters(groupedItems.getData(), orderByFilters);
+      GroupedItems sortedItems = new GroupedItems(groupedItemsList);
       return new ResponseEntity<GroupedItems>(sortedItems, HttpStatus.OK);
     } catch(NoSuchFieldException e) {
       return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
