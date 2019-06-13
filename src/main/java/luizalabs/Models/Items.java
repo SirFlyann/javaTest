@@ -14,6 +14,13 @@ public class Items implements Serializable{
   @JsonProperty("items")
   @Getter @Setter private List<Item> items;
   
+  public Items(List<Item> itemsList) {
+    this.items = itemsList;
+    this.filter = null;
+    this.orderBy = null;
+    this.groupBy = null;
+  }
+
   @JsonProperty("filter")
   @Getter @Setter private String filter;
   
